@@ -1,0 +1,68 @@
+.dealer-table  {
+  border: #2e1a12 solid 20px;
+  -webkit-border-image: url(wood.jpg) 100 stretch;
+  -moz-border-image: url(wood.jpg) 100 stretch;
+  border-image: url(wood.jpg) 100 stretch;
+  }
+
+.table-cover {
+  padding: 20px;
+  background: #006633;
+  }
+
+.dealer-table-wrapper {
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  overflow: hidden;
+  }
+
+.dealer-table-wrapper h4 {
+  color: #fff;
+  }
+
+.card {
+  margin: 0 8px 10px 0;
+  }
+
+img.blackjack {
+  margin: 40px auto;
+  position: relative;
+  animation-name:mymove;
+  animation-duration:3s;
+  -webkit-animation-name:mymove;
+  -webkit-animation-duration:3s;
+}
+
+@keyframes mymove
+{
+from {top:-320px;}
+to {top:0px;}
+}
+
+@-webkit-keyframes mymove /* Safari and Chrome */
+{
+from {top:-320px;}
+to {top:0px;}
+}
+}
+
+.player-info {
+  font-size: 1.2em;
+  }
+
+.player-info span {
+  font-size: 1.0em;
+  }
+
+.player-seat {
+  padding: 10px;
+  background: #2BBD74;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.play-again {
+  margin: 0  0 25px 40px;
+}

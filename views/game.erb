@@ -1,0 +1,58 @@
+
+<div class="dealer-table-wrapper">
+  <div class="dealer-table">
+    <div class="table-cover dealer">
+      <h4>Dealer cards:</h4>
+      <% if @show_hit_stay_btn %>
+        <img class="card" src="/images/cards/cover.jpg"> 
+        <img class="card" src="/images/cards/<%= card_to_card_img(session[:dealer_cards][1])%>"> 
+         <div class="player-seat"><p class="player-info"> The dealer first card is hidden until the dealer turn.
+         </p></div>
+      <% else %>
+        <% session[:dealer_cards].each do |card| %>
+        <img class="card" src="/images/cards/<%= card_to_card_img(card)%>"> 
+        <% end %>
+          <% if session[:dealer_hit] %>
+            <div class="player-seat"><p class="player-info"> The dealer total is  <%= total(session[:dealer_cards]) %>, the dealer will Hit </p>
+
+              
+                <div class="controls controls-row">
+                  <form class="pull-left" method="post" action="/game/dealer/hit">
+                    <input class="btn btn-primary" type="submit" value="Click me to see the next dealer card" name="hit">
+                  </form>
+
+                </div>
+            </div>
+          <% end %>
+
+      <% end %>
+    </div>
+
+    <div class="table-cover">
+      <h4><%= session[:player_name] %> cards:</h4>
+      <% session[:player_cards].each do |card| %>
+        <img class="card" src="/images/cards/<%= card_to_card_img(card)%>"> 
+        <% end %>
+    <br>
+    <% if @show_hit_stay_btn %>
+      <div class="player-seat"><p class="player-info"> <%= session[:player_name] %> your total is  <%= total(session[:player_cards]) %>, Would you like to Hit or Stay? <br>
+        <span >Your balance is: $<%= session[:player_money] %>  - Your bet is: <%= session[:player_bet] %></span> </p>
+
+        
+          <div class="controls controls-row">
+            <form class="pull-left span1" method="post" action="/<%= session[:player_name] %>/hit">
+              <input class="btn btn-success" type="submit" value="Hit" name="hit">
+            </form>
+
+            <form  class="pull-left span3" method="post" action="/<%= session[:player_name] %>/stay">
+              <input class="btn btn-warning" type="submit" value="Stay" name="stay">
+            </form>
+        </div>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<br>
+

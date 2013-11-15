@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Alfa ~ Omega BlackJack</title>
+    <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/application.css">
+  </head>
+  <body style="padding-top: 50px;">
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+            <ul class="nav">
+              <li><a href="/">Home</a></li>
+              <li><a href="/new-game">New Game</a></li>
+            </ul>
+            <% if session[:player_money] %>
+          
+            <% end %>
+        </div>
+      </div>
+    </div>
+
+  <div class="container">
+    <%if @error %>
+      <div class="alert alert-error"><%=@error%></div>
+    <% end %>
+    <%if @success %>
+      <div class="alert alert-success"><%=@success%></div>
+    <% end %>
+    <%if @play_again %>
+      <a class="btn btn-primary play-again" href="/bet" >Play again</a>
+    <% end %>
+      <%= yield %>
+  </div>
+  </body>
+</html>
