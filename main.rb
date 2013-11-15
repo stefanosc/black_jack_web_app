@@ -119,8 +119,19 @@ end
 
 post '/:player_name/bet' do
   session[:player_bet] = params[:player_bet].to_i
-  session[:player_money] -= session[:player_bet]
-  redirect "/game"
+  if session[:player_money] <= 0
+    @error = "I am sorry you finished your money. You can start a new game if you like"
+    erb :new-game
+  elsif session[:player_bet] == 0
+    @error = "The minimum bet is $1 please bet and click Play"
+    erb :bet
+  elsif session[:player_bet] > session[:player_money]
+    @error = "You can't bet more than what you have, please only be up to $#{session[:player_money]}"
+    erb :bet
+  else
+    session[:player_money] -= session[:player_bet]
+    redirect "/game"
+  end
 end
 
 
