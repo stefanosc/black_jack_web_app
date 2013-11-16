@@ -159,7 +159,7 @@ get '/game' do
   erb :game
 end
 
-post '/:player_name/hit' do
+post '/game/player/hit' do
   # binding.pry
   session[:player_cards] << deal
   if total(session[:player_cards]) > 21

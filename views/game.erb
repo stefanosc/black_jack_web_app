@@ -40,8 +40,8 @@
 
         
           <div class="controls controls-row">
-            <form class="pull-left span1" method="post" action="/<%= session[:player_name] %>/hit">
-              <input class="btn btn-success" type="submit" value="Hit" name="hit">
+            <form class="pull-left span1" method="post" >
+              <input class="btn btn-success" id="hit_button" type="submit" value="Hit" name="hit">
             </form>
 
             <form  class="pull-left span3" method="post" action="/<%= session[:player_name] %>/stay">
