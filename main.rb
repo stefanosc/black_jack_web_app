@@ -4,6 +4,9 @@ require "pry"
 
 set :sessions, true
 
+BLACKJACK_AMOUNT = 21
+DEALER_MIN_HIT = 17
+
 helpers do 
   def card_to_card_img card
 
@@ -53,7 +56,7 @@ helpers do
     
     # correct for aces
     values.select{|card| card == "A"}.count.times do
-      break if total <= 21
+      break if total <= BLACKJACK_AMOUNT
       total -= 10
     end  
     total
@@ -61,11 +64,11 @@ helpers do
 
 
   def busted? cards
-    (total(cards)) > 21
+    (total(cards)) > BLACKJACK_AMOUNT
   end
 
   def has_blackjack? cards
-    if cards.length == 2 and (total(cards)) == 21
+    if cards.length == 2 and (total(cards)) == BLACKJACK_AMOUNT
       true
     else
       false
@@ -171,7 +174,7 @@ end
 post '/game/player/hit' do
   # binding.pry
   session[:player_cards] << deal
-  if total(session[:player_cards]) > 21
+  if total(session[:player_cards]) > BLACKJACK_AMOUNT
     lost("You busted with #{total(session[:player_cards])}. Your new balance is #{session[:player_money]}")
     session[:stay_msg] = "Unfortunately you busted"
   end
@@ -190,11 +193,11 @@ get '/game/dealer' do
   if has_blackjack?(session[:dealer_cards])
     lost("The dealer hit BlackJack. Your balance is #{session[:player_money]}")
     session[:turn] = "game_over"
-  elsif total(session[:dealer_cards]) > 21
+  elsif total(session[:dealer_cards]) > BLACKJACK_AMOUNT
     session[:player_money] += (session[:player_bet]*2)
     win("The dealer busted. Your balance is #{session[:player_money]}")
     session[:turn] = "game_over"
-  elsif total(session[:dealer_cards]) >= 17
+  elsif total(session[:dealer_cards]) >= DEALER_MIN_HIT
     redirect '/game/compare'
   else
     session[:turn] = "dealer"
