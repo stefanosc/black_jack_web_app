@@ -1,10 +1,4 @@
 <div id="game-wrapper">
-  <%if @error %>
-    <div class="alert alert-error"><%=@error%></div>
-  <% end %>
-  <%if @success %>
-    <div class="alert alert-success"><%=@success%></div>
-  <% end %>
   <%if session[:turn] == "game_over" %>
     <a class="btn btn-primary play-again" href="/bet" >Play again</a>
   <% end %>
@@ -50,10 +44,8 @@
           <img class="card" src="/images/cards/<%= card_to_card_img(card)%>"> 
           <% end %>
         <br>
-        <div class="player-seat">
         <% if session[:turn] == "player" %>
-           <p class="player-info">
-            <%= session[:player_name] %> your total is  <%= total(session[:player_cards]) %>, Would you like to Hit or Stay? <br>
+          <div class="player-seat"><p class="player-info"> <%= session[:player_name] %> your total is  <%= total(session[:player_cards]) %>, Would you like to Hit or Stay? <br>
             <span >Your balance is: $<%= session[:player_money] %>  - Your bet is: <%= session[:player_bet] %></span> </p>
 
             
@@ -66,10 +58,8 @@
                   <input class="btn btn-warning" id="stay_button" type="submit" value="Stay" name="stay">
                 </form>
               </div>
-        <% elsif session[:stay_msg] %>
-           <p class="player-info"><%= session[:stay_msg] %></p>    
+          </div>
         <% end %>
-        </div>        
       </div>
     </div>
   </div>

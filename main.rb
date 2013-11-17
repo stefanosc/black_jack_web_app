@@ -72,31 +72,40 @@ helpers do
     end
   end
 
-  def player_turn
+  def win(msg)
+    session[:turn] = "game_over"
+    @success = "<b>#{session[:player_name]} you won this hand.</b> <br>#{msg}"
+  end
 
-    
+  def lost(msg)
+    session[:turn] = "game_over"
+    @error = "<b>#{session[:player_name]} you lost this hand.</b><br> #{msg}"
+  end
+
+  def push(msg)
+    session[:turn] = "game_over"
+    @success = "<b>#{session[:player_name]} this hand is a \"push\".</b> <br>#{msg}"
   end
   
 end
 
-before do
-  @show_hit_stay_btn = true
+# before do
 
-end
+
+# end
 
 
 
 
 get '/' do
-  # if session[:player_name]
-  #   redirect '/new-game'
-  # else
+
     erb :home
-  # end
+
 end
 
 
 get '/new-game' do
+  session[:turn] = "new"
   erb :'new-game'
 end
 
@@ -114,6 +123,7 @@ end
 
 
 get '/bet' do
+  session[:turn] = "new"
   if session[:player_money] < 1
     @error = "I am sorry you finished your money. You can start a new game if you like"
     erb :'new-game'
@@ -144,61 +154,54 @@ get '/game' do
   session[:deck] = (values.product(suits)).shuffle!
   session[:player_cards] = []
   session[:dealer_cards] = []
+  session[:turn] = "player"
+  session[:stay_msg] = nil
 
   session[:player_cards] << deal
   session[:dealer_cards] << deal
   session[:player_cards] << deal
   session[:dealer_cards] << deal
-  if has_blackjack?(session[:player_cards])
-    session[:player_money] += (session[:player_bet]*3)
-    @success = "#{session[:player_name]}, you hit BlackJack, you won this hand. Your balance is #{session[:player_money]}"
-    @show_hit_stay_btn = false
-    session[:dealer_hit] = false
-    @play_again = true
+  if has_blackjack?(session[:player_cards]) and !has_blackjack?(session[:dealer_cards])
+    session[:player_money] += (session[:player_bet]*2.5)
+    win("You hit BlackJack. Your balance is #{session[:player_money]}")
   end
-  erb :game
+  erb :first_game
 end
 
 post '/game/player/hit' do
   # binding.pry
   session[:player_cards] << deal
   if total(session[:player_cards]) > 21
-    @error = "Sorry #{session[:player_name]}, you busted with #{total(session[:player_cards])}. You lost this hand. Your new balance is #{session[:player_money]}"
-    @play_again = true
-    @show_hit_stay_btn = false
-    session[:dealer_hit] = false
-
+    lost("You busted with #{total(session[:player_cards])}. Your new balance is #{session[:player_money]}")
+    session[:stay_msg] = "Unfortunately you busted"
   end
-  erb :game
+  erb :game, :layout => false
 end
 
-post '/:player_name/stay' do
+post '/game/player/stay' do
   # binding.pry
-  @success = "#{session[:player_name]}, you decided to stay with #{total(session[:player_cards])}"
-  @show_hit_stay_btn = false
-  session[:dealer_hit] = true
+  session[:stay_msg] = "#{session[:player_name]}, you decided to stay with #{total(session[:player_cards])}"
+  session[:turn] = "dealer"
   redirect '/game/dealer'
 end
 
 get '/game/dealer' do
-  @show_hit_stay_btn = false
+  session[:turn] = "dealer"
   if has_blackjack?(session[:dealer_cards])
-    @error = "Sorry #{session[:player_name]}, the dealer hit BlackJack, you loose this hand! Your balance is #{session[:player_money]}"
-    session[:dealer_hit] = false
-    @play_again = true
+    lost("The dealer hit BlackJack. Your balance is #{session[:player_money]}")
+    session[:turn] = "game_over"
   elsif total(session[:dealer_cards]) > 21
     session[:player_money] += (session[:player_bet]*2)
-    @success = "#{session[:player_name]}, the dealer busted, you won this game! Your balance is #{session[:player_money]}"
-    session[:dealer_hit] = false
-    @play_again = true
+    win("The dealer busted. Your balance is #{session[:player_money]}")
+    session[:turn] = "game_over"
   elsif total(session[:dealer_cards]) >= 17
     redirect '/game/compare'
   else
-    session[:dealer_hit] = true
+    session[:turn] = "dealer"
   end
      
-  erb :game 
-    
+  erb :game, :layout => false
+
 end
 
 post '/game/dealer/hit' do
@@ -209,19 +212,20 @@ end
 get '/game/compare' do
   player_total = total(session[:player_cards])
   dealer_total = total(session[:dealer_cards])
-  if dealer_total >= player_total
-    @error = "The dealer wins this hand with #{dealer_total}. You stayed with #{player_total}. your balance is #{session[:player_money]}"
-    session[:dealer_hit] = false
-    @show_hit_stay_btn = false
-    @play_again = true
-    erb :game
+  if dealer_total > player_total
+    lost("You stayed with #{player_total}. The dealer stayed with #{dealer_total}. Your balance is #{session[:player_money]}")
+    session[:turn] = "game_over"
+    erb :game, :layout => false
+  elsif dealer_total = player_total
+    session[:player_money] += (session[:player_bet])
+    push("You stayed with #{player_total}. The dealer stayed with #{dealer_total}. Your balance is #{session[:player_money]}")
+    session[:turn] = "game_over"
+    erb :game, :layout => false
   else
     session[:player_money] += (session[:player_bet]*2)
-    @success = "#{session[:player_name]}, you won with #{player_total}. The dealer stayed with #{dealer_total}. Your new balance is #{session[:player_money]}"
-    session[:dealer_hit] = false
-    @show_hit_stay_btn = false
-    @play_again = true
-    erb :game
+    win("You stayed with #{player_total}. The dealer stayed with #{dealer_total}. Your new balance is #{session[:player_money]}")
+    session[:turn] = "game_over"
+    erb :game, :layout => false
   end
 
 end

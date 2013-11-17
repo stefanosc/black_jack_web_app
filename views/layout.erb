@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/application.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> 
-    <script scr="/application.js"></script>
+    <script src="/application_new.js"></script>
   </head>
   <body style="padding-top: 50px;">
 
@@ -29,9 +29,6 @@
     <% end %>
     <%if @success %>
       <div class="alert alert-success"><%=@success%></div>
-    <% end %>
-    <%if @play_again %>
-      <a class="btn btn-primary play-again" href="/bet" >Play again</a>
     <% end %>
       <%= yield %>
   </div>
