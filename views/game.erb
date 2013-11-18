@@ -1,9 +1,9 @@
 <div id="game-wrapper">
-  <%if @error %>
-    <div class="alert alert-error"><%=@error%></div>
+  <%if @loser %>
+    <div class="alert alert-error"><%=@loser%></div>
   <% end %>
-  <%if @success %>
-    <div class="alert alert-success"><%=@success%></div>
+  <%if @winner %>
+    <div class="alert alert-success"><%=@winner %></div>
   <% end %>
   <%if session[:turn] == "game_over" %>
     <a class="btn btn-primary play-again" href="/bet" >Play again</a>

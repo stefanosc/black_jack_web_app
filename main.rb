@@ -77,17 +77,17 @@ helpers do
 
   def win(msg)
     session[:turn] = "game_over"
-    @success = "<b>#{session[:player_name]} you won this hand.</b> <br>#{msg}"
+    @winner = "<b>#{session[:player_name]} you won this hand.</b> <br>#{msg}"
   end
 
   def lost(msg)
     session[:turn] = "game_over"
-    @error = "<b>#{session[:player_name]} you lost this hand.</b><br> #{msg}"
+    @loser = "<b>#{session[:player_name]} you lost this hand.</b><br> #{msg}"
   end
 
   def push(msg)
     session[:turn] = "game_over"
-    @success = "<b>#{session[:player_name]} this hand is a \"push\".</b> <br>#{msg}"
+    @winner = "<b>#{session[:player_name]} this hand is a \"push\".</b> <br>#{msg}"
   end
   
 end
@@ -116,7 +116,7 @@ end
 post '/set_player_name' do
   if params[:player_name].empty?
     @error = "You can't leave the name empty, please choose a name and click Play"
-    erb :'new-game'
+    halt erb(:'new-game')
   else
   session[:player_name] = params[:player_name]
   session[:player_money] = 500
@@ -139,10 +139,10 @@ post '/:player_name/bet' do
   session[:player_bet] = params[:player_bet].to_i
   if session[:player_bet] == 0
     @error = "The minimum bet is $1 please bet and click Play"
-    erb :bet
+    halt erb(:bet)
   elsif session[:player_bet] > session[:player_money]
     @error = "You can't bet more than what you have, please only be up to $#{session[:player_money]}"
-    erb :bet
+    halt erb(:bet)
   else
     session[:player_money] -= session[:player_bet]
     redirect "/game"
@@ -167,8 +167,13 @@ get '/game' do
   if has_blackjack?(session[:player_cards]) and !has_blackjack?(session[:dealer_cards])
     session[:player_money] += (session[:player_bet]*2.5)
     win("You hit BlackJack. Your balance is #{session[:player_money]}")
+    session[:stay_msg] = "That is a nice BlackJack!"
+  elsif has_blackjack?(session[:player_cards]) and has_blackjack?(session[:dealer_cards])
+    session[:player_money] += (session[:player_bet]*2)
+    win("You hit BlackJack, and the dealer also hit BlackJack. Your balance is #{session[:player_money]}")    
+    session[:stay_msg] = "That is a nice BlackJack!"
   end
-  erb :first_game
+  erb :game
 end
 
 post '/game/player/hit' do
